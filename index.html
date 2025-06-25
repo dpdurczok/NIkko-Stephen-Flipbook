@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Flipbook</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- jQuery & turn.js -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="js/turn.min.js"></script>
+</head>
+<body>
+  <div class="flipbook-container">
+    <div id="flipbook">
+      <!-- Page 1 -->
+      <div class="page">
+        <img src="assets/page1.png" alt="Page 1">
+      </div>
+      <!-- Page 2: autoplay video -->
+      <div class="page">
+        <video id="video-page" autoplay>
+          <source src="assets/video.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <!-- Page 3 -->
+      <div class="page">
+        <img src="assets/page3.png" alt="Page 3">
+      </div>
+      <!-- Page 4 with download banner -->
+      <div class="page">
+        <img src="assets/page4.png" alt="Page 4">
+        <a href="https://drive.google.com/drive/folders/15PE-fq3W8_XyKG9D-A5u8h8lyUxyctR_?usp=sharing"
+           target="_blank"
+           class="download-banner"
+           title="Download Memories">
+          <img src="assets/icon_download.png" alt="Download Memories">
+        </a>
+      </div>
+    </div>
+
+    <!-- Prev/Next Buttons -->
+    <button id="prev-btn" class="nav-btn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 18l-6-6 6-6" fill="none" stroke="white" stroke-width="2"/>
+      </svg>
+    </button>
+    <button id="next-btn" class="nav-btn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(180deg);">
+        <path d="M15 18l-6-6 6-6" fill="none" stroke="white" stroke-width="2"/>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    $(function() {
+      var fb      = $('#flipbook'),
+          videoEl = $('#video-page').get(0),
+          totalPages;
+
+      // Initialize flipbook with single‐page curl preset
+      fb.turn({
+        width       : 720,
+        height      : 1280,
+        autoCenter  : true,
+        display     : 'single',
+        acceleration: true,
+        gradients   : true,      // enable the soft gradient curl
+        elevation   : 50,        // depth of the curl shadow
+        corners     : 'tr,br',   // only top/right and bottom/right curl
+        when: {
+          turning: function() {
+            if (videoEl) {
+              videoEl.pause();
+              videoEl.currentTime = 0;
+            }
+          },
+          turned: function(e, page) {
+            updateArrows(page);
+            if (page === 2 && videoEl) {
+              videoEl.muted = false;
+              videoEl.play().catch(function(){});
+            }
+          }
+        }
+      });
+
+      totalPages = fb.turn('pages');
+
+      // show/hide arrows
+      function updateArrows(page) {
+        page <= 1 ? $('#prev-btn').hide() : $('#prev-btn').show();
+        page >= totalPages ? $('#next-btn').hide() : $('#next-btn').show();
+      }
+      updateArrows(1);
+
+      // navigate helper
+      function goTo(page) {
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+        updateArrows(page);
+        fb.turn('page', page);
+      }
+
+      // button clicks
+      $('#prev-btn').click(() => goTo(fb.turn('page') - 1));
+      $('#next-btn').click(() => goTo(fb.turn('page') + 1));
+
+      // keyboard support
+      $(document).keydown(function(e) {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(fb.turn('page') - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); goTo(fb.turn('page') + 1); }
+      });
+
+      // swipe support
+      var touchStartX = null;
+      fb.on('touchstart', e => { touchStartX = e.originalEvent.touches[0].clientX; });
+      fb.on('touchend',   e => {
+        if (touchStartX === null) return;
+        var dx = touchStartX - e.originalEvent.changedTouches[0].clientX;
+        if      (dx > 50)  goTo(fb.turn('page') + 1);
+        else if (dx < -50) goTo(fb.turn('page') - 1);
+        touchStartX = null;
+      });
+
+      // scale-to-fit
+      function resizeFlipbook() {
+        var scale = $(window).height() / 1280;
+        $('.flipbook-container').css({
+          transform  : 'scale(' + scale + ')',
+          marginLeft : -(720 * scale / 2) + 'px',
+          left       : '50%'
+        });
+      }
+      $('.flipbook-container').css({ position: 'absolute', top: 0 });
+      $(window).on('resize', resizeFlipbook);
+      resizeFlipbook();
+    });
+  </script>
+</body>
+</html>

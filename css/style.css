@@ -1,0 +1,87 @@
+/* Dark gradient background */
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #111 0%, #000 100%);
+}
+
+/* Container for book + arrows; will be scaled */
+.flipbook-container {
+  transform-origin: top center;
+  position: absolute;
+  top: 0;
+}
+
+/* Natural flipbook size */
+#flipbook {
+  width: 720px;
+  height: 1280px;
+  background: black;
+  touch-action: pan-y;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Page context */
+.page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Only target the main page image */
+.page > img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Full-cover video */
+.page video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Download banner on last page */
+.download-banner {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 5;
+}
+.download-banner img {
+  width: 200px;
+  height: auto;
+}
+
+/* Navigation buttons (white SVG arrows) */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+.nav-btn:hover {
+  opacity: 1;
+}
+.nav-btn svg {
+  width: 80px;
+  height: 80px;
+}
+
+/* Arrows flush to the flipbook edges */
+#prev-btn { left: 0; }
+#next-btn { right: 0; }
