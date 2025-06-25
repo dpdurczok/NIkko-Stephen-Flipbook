@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,14 +17,24 @@
   <div class="viewport">
     <div class="flipbook-container">
       <div id="flipbook">
-        <div class="page"><img src="assets/page1.png" alt="Page 1"></div>
         <div class="page">
-          <video id="video-page" muted>
+          <img src="assets/page1.png" alt="Page 1">
+        </div>
+        <div class="page">
+          <!-- Added controls & preload -->
+          <video
+            id="video-page"
+            muted
+            controls
+            preload="metadata"
+          >
             <source src="assets/video.mp4" type="video/mp4">
             Your browser does not support the video tag.
           </video>
         </div>
-        <div class="page"><img src="assets/page3.png" alt="Page 3"></div>
+        <div class="page">
+          <img src="assets/page3.png" alt="Page 3">
+        </div>
         <div class="page">
           <img src="assets/page4.png" alt="Page 4">
           <a href="https://drive.google.com/drive/folders/15PE-fq3W8_XyKG9D-A5u8h8lyUxyctR_?usp=sharing"
@@ -71,7 +82,10 @@
             toggleArrows(page);
             if (page === 2 && videoEl) {
               videoEl.muted = false;
+              videoEl.controls = true;  // ensure controls are visible
               videoEl.play().catch(()=>{});
+            } else if (videoEl) {
+              videoEl.controls = false; // hide when off-screen (optional)
             }
           }
         }

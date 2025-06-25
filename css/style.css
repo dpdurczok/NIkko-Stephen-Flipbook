@@ -1,3 +1,4 @@
+/* css/style.css */
 /* reset body */
 body {
   margin: 0;
@@ -49,13 +50,16 @@ body {
 /* download banner */
 .download-banner {
   position: absolute;
-  bottom: 20px; right: 20px;
+  bottom: 20px;
+  left: 20px;    /* move from right to left */
+  right: auto;
   z-index: 5;
 }
 .download-banner img {
-  width: 200px;
+  width: 400px;  /* 200px × 1.5 = 300px */
   height: auto;
 }
+
 
 /* nav buttons */
 .nav-btn {

@@ -1,5 +1,5 @@
 cd C:/Users/dpdur/Desktop/FlipBook
 git status
 git add .
-git commit -m "Commit Comment"
+git commit -m "Commit Description"
 git push origin main
