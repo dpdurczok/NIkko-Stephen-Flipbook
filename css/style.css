@@ -6,11 +6,12 @@ body {
   background: linear-gradient(135deg, #111 0%, #000 100%);
 }
 
-/* Container for book + arrows; will be scaled */
+/* Container for book + arrows; centered both axes */
 .flipbook-container {
-  transform-origin: top center;
   position: absolute;
-  top: 0;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
 }
 
 /* Natural flipbook size */
@@ -31,7 +32,7 @@ body {
   overflow: hidden;
 }
 
-/* Only target the main page image */
+/* Images */
 .page > img {
   position: absolute;
   top: 0; left: 0;
@@ -40,7 +41,7 @@ body {
   object-fit: cover;
 }
 
-/* Full-cover video */
+/* Video full‐cover */
 .page video {
   position: absolute;
   top: 0; left: 0;
@@ -49,7 +50,7 @@ body {
   object-fit: cover;
 }
 
-/* Download banner on last page */
+/* Download banner */
 .download-banner {
   position: absolute;
   bottom: 20px;
@@ -61,7 +62,7 @@ body {
   height: auto;
 }
 
-/* Navigation buttons (white SVG arrows) */
+/* Navigation buttons */
 .nav-btn {
   position: absolute;
   top: 50%;
@@ -82,6 +83,6 @@ body {
   height: 80px;
 }
 
-/* Arrows flush to the flipbook edges */
+/* Flush arrows to edges */
 #prev-btn { left: 0; }
 #next-btn { right: 0; }

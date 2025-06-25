@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- ensure proper scaling on mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Flipbook</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-
 
   <!-- jQuery & turn.js -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -20,7 +21,7 @@
       </div>
       <!-- Page 2: autoplay video -->
       <div class="page">
-        <video id="video-page" autoplay>
+        <video id="video-page" autoplay muted>
           <source src="assets/video.mp4" type="video/mp4">
           Your browser does not support the video tag.
         </video>
@@ -60,16 +61,16 @@
           videoEl = $('#video-page').get(0),
           totalPages;
 
-      // Initialize flipbook with single‐page curl preset
+      // Initialize Turn.js; we'll handle centering/scaling
       fb.turn({
         width       : 720,
         height      : 1280,
-        autoCenter  : true,
+        autoCenter  : false,
         display     : 'single',
         acceleration: true,
-        gradients   : true,      // enable the soft gradient curl
-        elevation   : 50,        // depth of the curl shadow
-        corners     : 'tr,br',   // only top/right and bottom/right curl
+        gradients   : true,
+        elevation   : 50,
+        corners     : 'tr,br',
         when: {
           turning: function() {
             if (videoEl) {
@@ -89,32 +90,28 @@
 
       totalPages = fb.turn('pages');
 
-      // show/hide arrows
       function updateArrows(page) {
-        page <= 1 ? $('#prev-btn').hide() : $('#prev-btn').show();
-        page >= totalPages ? $('#next-btn').hide() : $('#next-btn').show();
+        $('#prev-btn')[ page <= 1 ? 'hide' : 'show' ]();
+        $('#next-btn')[ page >= totalPages ? 'hide' : 'show' ]();
       }
       updateArrows(1);
 
-      // navigate helper
       function goTo(page) {
-        if (page < 1) page = 1;
-        if (page > totalPages) page = totalPages;
+        page = Math.min(Math.max(page, 1), totalPages);
         updateArrows(page);
         fb.turn('page', page);
       }
 
-      // button clicks
       $('#prev-btn').click(() => goTo(fb.turn('page') - 1));
       $('#next-btn').click(() => goTo(fb.turn('page') + 1));
 
-      // keyboard support
+      // keyboard
       $(document).keydown(function(e) {
         if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(fb.turn('page') - 1); }
         if (e.key === 'ArrowRight') { e.preventDefault(); goTo(fb.turn('page') + 1); }
       });
 
-      // swipe support
+      // swipe
       var touchStartX = null;
       fb.on('touchstart', e => { touchStartX = e.originalEvent.touches[0].clientX; });
       fb.on('touchend',   e => {
@@ -125,16 +122,16 @@
         touchStartX = null;
       });
 
-      // scale-to-fit
+      // calculate the proper scale to fit both width & height, then center
       function resizeFlipbook() {
-        var scale = $(window).height() / 1280;
+        var w = window.innerWidth,
+            h = window.innerHeight,
+            scale = Math.min(w / 720, h / 1280);
+
         $('.flipbook-container').css({
-          transform  : 'scale(' + scale + ')',
-          marginLeft : -(720 * scale / 2) + 'px',
-          left       : '50%'
+          transform: 'translate(-50%, -50%) scale(' + scale + ')'
         });
       }
-      $('.flipbook-container').css({ position: 'absolute', top: 0 });
       $(window).on('resize', resizeFlipbook);
       resizeFlipbook();
     });
