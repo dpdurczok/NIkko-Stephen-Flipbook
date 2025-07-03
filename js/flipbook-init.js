@@ -87,6 +87,7 @@
         fb.append($pg);
       });
 
+      
       // wait until the cover asset actually loads
       const firstEl = $('.page').first().find('img, video').get(0);
       await new Promise(resolve => {
