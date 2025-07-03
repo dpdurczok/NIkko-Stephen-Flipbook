@@ -1,51 +1,34 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- ensure proper scaling on mobile -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- lock to device width, no auto-zoom -->
+  <meta name="viewport"
+        content="width=device-width,
+                 initial-scale=1.0,
+                 maximum-scale=1.0,
+                 user-scalable=no">
   <title>My Flipbook</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
+
   <!-- jQuery & turn.js -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="js/turn.min.js"></script>
+
+  <!-- your CSS -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- PADDED VIEWPORT -->
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader"></div>
+  </div>
+
+  <!-- FLIPBOOK VIEWPORT -->
   <div class="viewport">
     <div class="flipbook-container">
-      <div id="flipbook">
-        <div class="page">
-          <img src="assets/page1.png" alt="Page 1">
-        </div>
-        <div class="page">
-          <!-- Added controls & preload -->
-          <video
-            id="video-page"
-            muted
-            controls
-            preload="metadata"
-          >
-            <source src="assets/video.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <div class="page">
-          <img src="assets/page3.png" alt="Page 3">
-        </div>
-        <div class="page">
-          <img src="assets/page4.png" alt="Page 4">
-          <a href="https://drive.google.com/drive/folders/15PE-fq3W8_XyKG9D-A5u8h8lyUxyctR_?usp=sharing"
-             target="_blank"
-             class="download-banner"
-             title="Download Memories">
-            <img src="assets/icon_download.png" alt="Download Memories">
-          </a>
-        </div>
-      </div>
-
+      <div id="flipbook"></div>
       <button id="prev-btn" class="nav-btn">
         <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="white" stroke-width="2"/></svg>
       </button>
@@ -55,82 +38,8 @@
     </div>
   </div>
 
-  <script>
-    $(function() {
-      var fb      = $('#flipbook'),
-          videoEl = $('#video-page').get(0),
-          totalPages;
-
-      // Init Turn.js
-      fb.turn({
-        width       : 720,
-        height      : 1280,
-        autoCenter  : false,
-        display     : 'single',
-        acceleration: true,
-        gradients   : true,
-        elevation   : 50,
-        corners     : 'tr,br',
-        when: {
-          turning: function() {
-            if (videoEl) {
-              videoEl.pause();
-              videoEl.currentTime = 0;
-            }
-          },
-          turned: function(e, page) {
-            toggleArrows(page);
-            if (page === 2 && videoEl) {
-              videoEl.muted = false;
-              videoEl.controls = true;  // ensure controls are visible
-              videoEl.play().catch(()=>{});
-            } else if (videoEl) {
-              videoEl.controls = false; // hide when off-screen (optional)
-            }
-          }
-        }
-      });
-      totalPages = fb.turn('pages');
-
-      function toggleArrows(page) {
-        $('#prev-btn')[ page <= 1 ? 'hide':'show' ]();
-        $('#next-btn')[ page >= totalPages ? 'hide':'show' ]();
-      }
-      toggleArrows(1);
-
-      function goTo(page) {
-        page = Math.min(Math.max(page,1), totalPages);
-        toggleArrows(page);
-        fb.turn('page', page);
-      }
-
-      $('#prev-btn').click(()=>goTo(fb.turn('page')-1));
-      $('#next-btn').click(()=>goTo(fb.turn('page')+1));
-      $(document).keydown(e=>{
-        if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(fb.turn('page')-1); }
-        if(e.key==='ArrowRight'){ e.preventDefault(); goTo(fb.turn('page')+1); }
-      });
-
-      // swipe
-      let touchX = null;
-      fb.on('touchstart', e=>{ touchX = e.originalEvent.touches[0].clientX; });
-      fb.on('touchend', e=>{
-        if(touchX===null) return;
-        let dx = touchX - e.originalEvent.changedTouches[0].clientX;
-        if(dx>50) goTo(fb.turn('page')+1);
-        else if(dx< -50) goTo(fb.turn('page')-1);
-        touchX = null;
-      });
-
-      // SCALE on load & resize
-      function resizeFlipbook(){
-        const w = $('.viewport').width(),
-              h = $('.viewport').height(),
-              scale = Math.min(w/720, h/1280);
-        $('.flipbook-container').css('transform', 'scale('+scale+')');
-      }
-      $(window).on('load resize', resizeFlipbook);
-    });
-  </script>
+  <!-- initialization script -->
+  <script src="js/flipbook-init.js"></script>
 </body>
 </html>
+  
