@@ -1,5 +1,5 @@
 cd "\\d3d_nas\homes\D3D\D3D Projects\2025\77_FlipBook_Nikko&Stephen\Final\FlipBook"
 git status
 git add .
-git commit -m "fixed link"
+git commit -m "Name Change"
 git push origin main
